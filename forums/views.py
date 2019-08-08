@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404
-from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from .models import Forum
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -32,18 +32,21 @@ class ForumDetail(DetailView):
 	# 	context['forum_list'] = Forum.objects.all()
 	# 	return context
 @method_decorator(login_required, name='dispatch')
-class ForumUpdate(OwnerMixin, UpdateView):
-	model = Forum
-	fields = ['title', 'desc']
-	template_name = 'forums/forum_update_form.html/'
-
-
-
 class ForumCreate(CreateView):
 	model = Forum
 	fields = ['title', 'desc']
 
-
 	def form_valid(self, form):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
+	
+@method_decorator(login_required, name='dispatch')
+class ForumUpdate(OwnerMixin, DeleteView):
+	model = Forum
+	fields = ['title', 'desc']
+	template_name = 'forums/forum_update_form.html/'
+
+@method_decorator(login_required, name='dispatch')
+class ForumDelete(OwnerMixin, DeleteView):
+	model = Forum
+	success_url = "/forum"

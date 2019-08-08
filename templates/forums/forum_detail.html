@@ -12,6 +12,10 @@
 
 	{% if request.user == object.user %}
 		<a href="{% url 'forum-edit' object.id %}"> Edit Forum </a>
+
+		<form method="POST" action="{% url 'forum-delete' object.id %}">
+			{% csrf_token %} <input type="submit" value="delete">
+		</form>
 	{% endif %}
 
 	<hr>
