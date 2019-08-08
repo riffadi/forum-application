@@ -9,10 +9,11 @@
 	- <time> {{object.created_at | naturaltime}} </time>
 	
 	<hr>
-	<hr>
 
-	{% for forum in forum_list  %}
-		<li>{{forum.title}}</li>
-	{% endfor %}
+	{% if request.user == object.user %}
+		<a href="{% url 'forum-edit' object.id %}"> Edit Forum </a>
+	{% endif %}
+
+	<hr>
 
 {% endblock %}
