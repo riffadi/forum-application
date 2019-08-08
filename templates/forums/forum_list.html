@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} List Forum{% endblock %}
+
+{% block content %}
+	<h2>List Forum</h2>
+	<ul>
+		{% for forum in object_list %}
+			<li>{{forum.title}}
+				- by <a href="{% url 'forum-by' forum.user %}">{{forum.user}}</a>
+			</li>
+		{% endfor %}
+	</ul>
+	<hr>
+
+	{% if user.is_authenticated %}
+		<a href="/forum/add">Add Forum</a>
+	{% endif %}
+
+{% endblock %}
