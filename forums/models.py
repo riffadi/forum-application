@@ -19,6 +19,8 @@ class Forum(models.Model):
 	def get_absolute_url(self):
 		return reverse('home')
 
+	def __str__(self):
+		return self.title
 
 class Comment(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
