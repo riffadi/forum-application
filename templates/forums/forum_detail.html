@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %} {{object.title}} {% endblock %}
+
+{% block content %}
+	<h2> {{object.title}} </h2>
+	<p> {{object.desc}} </p>
+	- <time> {{object.created_at | naturaltime}} </time>
+	
+	<hr>
+	<hr>
+
+	{% for forum in forum_list  %}
+		<li>{{forum.title}}</li>
+	{% endfor %}
+
+{% endblock %}

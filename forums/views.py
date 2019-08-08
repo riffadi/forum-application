@@ -1,18 +1,26 @@
 from django.shortcuts import render,get_object_or_404
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView
 from .models import Forum
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-class ForumListView(ListView):
+class ForumList(ListView):
 	model = Forum
 	#context_object_name = 'forums'
+	queryset = Forum.objects.order_by('-created_at')
 
-class ForumUserListView(ListView):
+class ForumUserList(ListView):
 	def get_queryset(self):
 		self.user = get_object_or_404(User, username=self.kwargs['username'])
 		return Forum.objects.filter(user = self.user)
+
+class ForumDetail(DetailView):
+	model = Forum
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['forum_list'] = Forum.objects.all()
+		return context
 
 @method_decorator(login_required, name='dispatch')
 
