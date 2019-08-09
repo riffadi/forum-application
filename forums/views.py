@@ -20,8 +20,8 @@ class OwnerMixin(object):
 
 class ForumList(ListView):
 	model = Forum
-	#context_object_name = 'forums'
 	queryset = Forum.objects.order_by('-created_at')
+	paginate_by = 2
 
 class ForumUserList(ListView):
 	def get_queryset(self):
