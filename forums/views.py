@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
-from .models import Forum
+from .models import Forum, Comment
+from .forms import CommentForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -27,10 +28,24 @@ class ForumUserList(ListView):
 
 class ForumDetail(DetailView):
 	model = Forum
-	# def get_context_data(self, **kwargs):
-	# 	context = super().get_context_data(**kwargs)
-	# 	context['forum_list'] = Forum.objects.all()
-	# 	return context
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['form_comment'] = CommentForm()
+		return context
+	
+@method_decorator(login_required, name='dispatch')
+class ForumUpdate(OwnerMixin, UpdateView):
+	model = Forum
+	fields = ['title', 'desc']
+	template_name = 'forums/forum_update_form.html'
+
+@method_decorator(login_required, name='dispatch')
+class ForumDelete(OwnerMixin, DeleteView):
+	model = Forum
+	success_url = "/forum"
+
+
 @method_decorator(login_required, name='dispatch')
 class ForumCreate(CreateView):
 	model = Forum
@@ -39,14 +54,16 @@ class ForumCreate(CreateView):
 	def form_valid(self, form):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
-	
-@method_decorator(login_required, name='dispatch')
-class ForumUpdate(OwnerMixin, DeleteView):
-	model = Forum
-	fields = ['title', 'desc']
-	template_name = 'forums/forum_update_form.html/'
 
-@method_decorator(login_required, name='dispatch')
-class ForumDelete(OwnerMixin, DeleteView):
-	model = Forum
-	success_url = "/forum"
+
+class CommentCreate(CreateView):
+	model = Comment
+	fields = ['desc']
+
+	def form_valid(self, form):
+		_forum = get_object_or_404(Forum, id=self.kwargs['pk'])
+		
+		form.instance.user = self.request.user
+		form.instance.forum = _forum
+
+		return super().form_valid(form)

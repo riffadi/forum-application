@@ -14,10 +14,23 @@
 		<a href="{% url 'forum-edit' object.id %}"> Edit Forum </a>
 
 		<form method="POST" action="{% url 'forum-delete' object.id %}">
-			{% csrf_token %} <input type="submit" value="delete">
+			{% csrf_token %} 
+			<input type="submit" value="delete">
 		</form>
 	{% endif %}
 
 	<hr>
 
+	{% for comment in object.comment_set.all  %}
+		<p> {{comment.desc}} </p>
+	{% endfor %}
+
+	<form method="post" action="{% url 'comment-add' object.id %}">
+		{% csrf_token %}
+		{{ form_comment }}
+		
+		<input type="submit" value="Send Comment">
+	</form>
+
+	
 {% endblock %}
