@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseForbidden
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
 
 class OwnerMixin(object):
 	def dispatch(self, request, *args, **kwargs):
@@ -35,10 +37,14 @@ class ForumDetail(DetailView):
 		return context
 	
 @method_decorator(login_required, name='dispatch')
-class ForumUpdate(OwnerMixin, UpdateView):
+class ForumUpdate(SuccessMessageMixin, OwnerMixin, UpdateView):
 	model = Forum
 	fields = ['title', 'desc']
 	template_name = 'forums/forum_update_form.html'
+	success_message = 'Forum has been edited successfully'
+
+	def get_success_url(self, **kwargs):
+		return reverse_lazy('forum-detail', kwargs={'slug':self.object.slug})
 
 @method_decorator(login_required, name='dispatch')
 class ForumDelete(OwnerMixin, DeleteView):
@@ -47,9 +53,10 @@ class ForumDelete(OwnerMixin, DeleteView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ForumCreate(CreateView):
+class ForumCreate(SuccessMessageMixin, CreateView):
 	model = Forum
 	fields = ['title', 'desc']
+	success_message = 'Forum was successfully created'
 
 	def form_valid(self, form):
 		form.instance.user = self.request.user
