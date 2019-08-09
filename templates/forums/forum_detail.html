@@ -15,14 +15,23 @@
 
 		<form method="POST" action="{% url 'forum-delete' object.id %}">
 			{% csrf_token %} 
-			<input type="submit" value="delete">
+			<input type="submit" value="Delete">
 		</form>
 	{% endif %}
 
 	<hr>
 
 	{% for comment in object.comment_set.all  %}
-		<p> {{comment.desc}} </p>
+		<p> {{comment.desc}} - by {{comment.user}}</p>
+
+		{% if request.user == comment.user %}
+			<a href="{% url 'comment-edit' comment.id %}"> Edit Comment </a>
+			
+			<form method="POST" action="{% url 'comment-delete' comment.id %}">
+				{% csrf_token %} <input type="submit" value="Delete Comment">
+			</form>
+		{% endif %}
+
 	{% endfor %}
 
 	<form method="post" action="{% url 'comment-add' object.id %}">

@@ -55,7 +55,14 @@ class ForumCreate(CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
+"""
 
+----- This is for comment forum -----
+
+"""
+
+
+@method_decorator(login_required, name='dispatch')
 class CommentCreate(CreateView):
 	model = Comment
 	fields = ['desc']
@@ -67,3 +74,14 @@ class CommentCreate(CreateView):
 		form.instance.forum = _forum
 
 		return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class CommentUpdate(OwnerMixin, UpdateView):
+	model = Comment
+	fields = ['desc']
+	template_name = 'forums/comment_update_form.html'
+
+@method_decorator(login_required, name='dispatch')
+class CommentDelete(OwnerMixin, DeleteView):
+	model = Comment
+	success_url = "/forum"
